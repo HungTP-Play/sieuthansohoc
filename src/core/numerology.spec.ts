@@ -181,5 +181,276 @@ describe('Numerology', () => {
                 });
             }
         });
+
+        describe('Test maturityNumber', () => {
+            const cases = [
+                { day: 1, month: 1, year: 2000, expected: 3 },
+                { day: 2, month: 1, year: 2000, expected: 4 },
+                { day: 8, month: 1, year: 2000, expected: 1 },
+                { day: 8, month: 1, year: 1998, expected: 8 },
+                { day: 12, month: 12, year: 1998, expected: 5 }
+            ];
+
+            for (const { day, month, year, expected } of cases) {
+                it(`should return ${expected} for ${day}/${month}/${year}`, () => {
+                    const numerology = new Numerology(day, month, year, 'John', 'Doe');
+                    expect(numerology.maturityNumber()).toBe(expected);
+                });
+            }
+        });
+
+        describe('Test bridgeToSuccessNumber', () => {
+            const cases = [
+                { day: 1, month: 1, year: 2000, expected: 4 },
+                { day: 2, month: 1, year: 2000, expected: 3 },
+                { day: 8, month: 1, year: 2000, expected: 3 },
+                { day: 8, month: 1, year: 1998, expected: 1 },
+                { day: 12, month: 12, year: 1998, expected: 7 }
+            ];
+
+            for (const { day, month, year, expected } of cases) {
+                it(`should return ${expected} for ${day}/${month}/${year}`, () => {
+                    const numerology = new Numerology(day, month, year, 'John', 'Doe');
+                    expect(numerology.bridgeToSuccessNumber()).toBe(expected);
+                });
+            }
+        });
+
+        describe('Test bridgeToHappyNumber', () => {
+            const cases = [
+                { firstName: 'John', lastName: 'Doe', expected: 1 },
+                { firstName: 'Jane', lastName: 'Doe', expected: 7 },
+                { firstName: 'Hung', middleName: 'Phat', lastName: 'Tran', expected: 3 },
+
+            ];
+
+            for (const { firstName, middleName, lastName, expected } of cases) {
+                it(`should return ${expected} for ${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`, () => {
+                    const numerology = new Numerology(1, 1, 2000, firstName, lastName, middleName);
+                    expect(numerology.bridgeToHappyNumber()).toBe(expected);
+                });
+            }
+        })
+    });
+
+    describe('Test KarmicLessonNumbers', () => {
+        const cases = [
+            { firstName: 'John', lastName: 'Doe', expected: [2, 3, 7, 9] },
+            { firstName: 'Jane', lastName: 'Doe', expected: [2, 3, 7, 8, 9] },
+            { firstName: 'Hung', middleName: 'Phat', lastName: 'Tran', expected: [4, 6] },
+        ];
+
+        for (const { firstName, middleName, lastName, expected } of cases) {
+            it(`should return ${expected} for ${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`, () => {
+                const numerology = new Numerology(1, 1, 2000, firstName, lastName, middleName);
+                expect(numerology.karmicLessonNumbers()).toEqual(expected);
+            });
+        }
+    });
+
+    describe('Test karmicDebtNumber', () => {
+        const cases = [
+            { day: 1, month: 1, year: 2000, expected: -1 },
+            { day: 2, month: 1, year: 2000, expected: -1 },
+            { day: 8, month: 1, year: 1998, expected: -1 },
+            { day: 1, month: 1, year: 1901, expected: 13 },
+        ];
+
+        for (const { day, month, year, expected } of cases) {
+            it(`should return ${expected} for ${day}/${month}/${year}`, () => {
+                const numerology = new Numerology(day, month, year, 'John', 'Doe');
+                expect(numerology.karmicDebtNumber()).toBe(expected);
+            });
+        }
+    });
+
+    describe('Test balanceNumber', () => {
+        const cases = [
+            { firstName: 'John', lastName: 'Doe', expected: 6 },
+            { firstName: 'Jane', lastName: 'Doe', expected: 6 },
+            { firstName: 'Hung', middleName: 'Phat', lastName: 'Tran', expected: 8 },
+        ];
+
+        for (const { firstName, middleName, lastName, expected } of cases) {
+            it(`should return ${expected} for ${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`, () => {
+                const numerology = new Numerology(1, 1, 2000, firstName, lastName, middleName);
+                expect(numerology.balanceNumber()).toBe(expected);
+            });
+        }
+    });
+
+    describe('Test birthMap', () => {
+        const templateMap = {
+            "1": undefined,
+            "2": undefined,
+            "3": undefined,
+            "4": undefined,
+            "5": undefined,
+            "6": undefined,
+            "7": undefined,
+            "8": undefined,
+            "9": undefined,
+        }
+
+        const cases = [
+            {
+                day: 1,
+                month: 1,
+                year: 2000,
+                expectedAssignWith: {
+                    "1": [1, 1],
+                    "2": [2],
+                }
+            }, {
+                day: 2,
+                month: 1,
+                year: 2000,
+                expectedAssignWith: {
+                    "1": [1],
+                    "2": [2, 2],
+                }
+            }, {
+                day: 8,
+                month: 1,
+                year: 1998,
+                expectedAssignWith: {
+                    "1": [1, 1],
+                    "8": [8, 8],
+                    "9": [9, 9],
+                }
+            }
+        ];
+
+        for (const { day, month, year, expectedAssignWith } of cases) {
+            it(`should return ${JSON.stringify(expectedAssignWith)} for ${day}/${month}/${year}`, () => {
+                const numerology = new Numerology(day, month, year, 'John', 'Doe');
+                expect(numerology.birthMap()).toEqual({ ...templateMap, ...expectedAssignWith });
+            });
+        }
+    });
+
+    describe('Test nameMap', () => {
+        const templateMap = {
+            "1": undefined,
+            "2": undefined,
+            "3": undefined,
+            "4": undefined,
+            "5": undefined,
+            "6": undefined,
+            "7": undefined,
+            "8": undefined,
+            "9": undefined,
+        }
+
+        const cases = [
+            {
+                firstName: 'John',
+                lastName: 'Doe',
+                expectedAssignWith: {
+                    "1": [1],
+                    "4": [4],
+                    "5": [5, 5],
+                    "6": [6, 6],
+                    "8": [8]
+                }
+            }, {
+                firstName: 'Jane',
+                lastName: 'Doe',
+                expectedAssignWith: {
+                    "1": [1, 1],
+                    "4": [4],
+                    "5": [5, 5, 5],
+                    "6": [6]
+                }
+            }, {
+                firstName: 'Hung',
+                middleName: 'Phat',
+                lastName: 'Tran',
+                expectedAssignWith: {
+                    "1": [1, 1],
+                    "2": [2, 2],
+                    "3": [3],
+                    "5": [5, 5],
+                    "7": [7, 7],
+                    "8": [8, 8],
+                    "9": [9],
+                }
+            }
+        ];
+
+        for (const { firstName, middleName, lastName, expectedAssignWith } of cases) {
+            it(`should return ${JSON.stringify(expectedAssignWith)} for ${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`, () => {
+                const numerology = new Numerology(1, 1, 2000, firstName, lastName, middleName);
+                expect(numerology.nameMap()).toEqual({ ...templateMap, ...expectedAssignWith });
+            });
+        }
+    });
+
+    describe('Test mergeMap', () => {
+        const templateMap = {
+            "1": undefined,
+            "2": undefined,
+            "3": undefined,
+            "4": undefined,
+            "5": undefined,
+            "6": undefined,
+            "7": undefined,
+            "8": undefined,
+            "9": undefined,
+        }
+
+        const cases = [
+            {
+                day: 1,
+                month: 1,
+                year: 2000,
+                firstName: 'John',
+                lastName: 'Doe',
+                expectedAssignWith: {
+                    '1': [1, 1, 1],
+                    '2': [2],
+                    '4': [4],
+                    '5': [5, 5],
+                    '6': [6, 6],
+                    '8': [8],
+                }
+            }, {
+                day: 2,
+                month: 1,
+                year: 2000,
+                firstName: 'Jane',
+                lastName: 'Doe',
+                expectedAssignWith: {
+                    '1': [1, 1, 1],
+                    '2': [2, 2],
+                    '4': [4],
+                    '5': [5, 5, 5],
+                    '6': [6],
+                }
+            }, {
+                day: 8,
+                month: 1,
+                year: 1998,
+                firstName: 'Hung',
+                middleName: 'Phat',
+                lastName: 'Tran',
+                expectedAssignWith: {
+                    '1': [1, 1, 1, 1],
+                    '2': [2, 2],
+                    '3': [3],
+                    '5': [5, 5],
+                    '7': [7, 7],
+                    '8': [8, 8, 8, 8],
+                    '9': [9, 9, 9]
+                }
+            }
+        ];
+
+        for (const { day, month, year, firstName, middleName, lastName, expectedAssignWith } of cases) {
+            it(`should return ${JSON.stringify(expectedAssignWith)} for ${day}/${month}/${year} ${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`, () => {
+                const numerology = new Numerology(day, month, year, firstName, lastName, middleName);
+                expect(numerology.mergeMap()).toEqual({ ...templateMap, ...expectedAssignWith });
+            });
+        }
     });
 });

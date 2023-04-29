@@ -347,7 +347,7 @@ export class Numerology {
             .concat(this.lastName.split(''))
             .concat(this.middleName?.split('').filter(c => c !== " ") || [])
             .map((character) => this.getCharacterValue(character));
-        const allNumbers = Array.from(Array(10).keys());
+        const allNumbers = Array.from(Array(10).keys()).filter((number) => number !== 0);
         this._karmicLessons = allNumbers.filter((number) => !allDigits.includes(number));
         this._karmicLessons = this._karmicLessons.length === 0 ? [-1] : this._karmicLessons;
         return this._karmicLessons;
@@ -424,6 +424,10 @@ export class Numerology {
         this.clearMap(this.BIRTH_MAP);
 
         for (const digit of allDigits) {
+            if (digit === 0) {
+                continue;
+            }
+
             if (!this.BIRTH_MAP[`${digit}`]) {
                 this.BIRTH_MAP[`${digit}`] = [digit];
             } else {
@@ -492,7 +496,7 @@ export class Numerology {
 
         for (const key in birthMap) {
             if (!birthMap[key] && !nameMap[key]) {
-                continue;
+                continue; 
             }
 
             this.MERGE_MAP[key] = [...(birthMap[key] || []), ...(nameMap[key] || [])];
