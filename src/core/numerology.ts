@@ -1,4 +1,16 @@
 export class Numerology {
+    private _lifePathNumber = -1;
+    private _destinyNumber = -1;
+    private _soulUrgeNumber = -1;
+    private _characterNumber = -1;
+    private _birthdayNumber = -1;
+    private _maturityNumber = -1;
+    private _bridgeToSuccessNumber = -1;
+    private _bridgeToHappyNumber = -1;
+    private _karmicLessons = [-1];
+    private _karmicDebtsNumber = -1;
+    private _balanceNumber = -1;
+
     constructor(
         private day: number,
         private month: number,
@@ -6,7 +18,9 @@ export class Numerology {
         private firstName: string,
         private lastName: string,
         private middleName?: string,
-    ) { }
+    ) {
+        this.calculateAll();
+    }
 
     private CHARACTER_MAP: Record<string, number> = {
         "A": 1,
@@ -37,8 +51,61 @@ export class Numerology {
         "Z": 8,
     }
 
+    private BIRTH_MAP: Record<string, number[] | undefined> = {
+        "1": undefined,
+        "2": undefined,
+        "3": undefined,
+        "4": undefined,
+        "5": undefined,
+        "6": undefined,
+        "7": undefined,
+        "8": undefined,
+        "9": undefined,
+    }
+
+    private NAME_MAP: Record<string, number[] | undefined> = {
+        "1": undefined,
+        "2": undefined,
+        "3": undefined,
+        "4": undefined,
+        "5": undefined,
+        "6": undefined,
+        "7": undefined,
+        "8": undefined,
+        "9": undefined,
+    }
+
+    private MERGE_MAP: Record<string, number[] | undefined> = {
+        "1": undefined,
+        "2": undefined,
+        "3": undefined,
+        "4": undefined,
+        "5": undefined,
+        "6": undefined,
+        "7": undefined,
+        "8": undefined,
+        "9": undefined,
+    }
+
     private VOWELS = ['A', 'E', 'I', 'O', 'U'];
     private CONSONANTS = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
+
+    private calculateAll() {
+        this.lifePathNumber();
+        this.destinyNumber();
+        this.soulUrgeNumber();
+        this.characterNumber();
+        this.birthdayNumber();
+        this.maturityNumber();
+        this.bridgeToSuccessNumber();
+        this.bridgeToHappyNumber();
+        this.karmicLessonNumbers();
+        this.karmicDebtNumber();
+        this.balanceNumber();
+        this.birthMap();
+        this.nameMap();
+        this.mergeMap();
+    }
 
     /**
      * Return value in number of a character
@@ -107,10 +174,15 @@ export class Numerology {
      * @returns 
      */
     lifePathNumber(): number {
+        if (this._lifePathNumber !== -1) {
+            return this._lifePathNumber;
+        }
+
         const allDigits = this.splitDigits(this.day)
             .concat(this.splitDigits(this.month))
             .concat(this.splitDigits(this.year));
-        return this.addUp(allDigits);
+        this._lifePathNumber = this.addUp(allDigits);
+        return this._lifePathNumber;
     }
 
     /**
@@ -123,6 +195,10 @@ export class Numerology {
      * @returns 
      */
     destinyNumber(): number {
+        if (this._destinyNumber !== -1) {
+            return this._destinyNumber;
+        }
+
         const firstNameDigits = this.firstName.split('')
             .map((character) => this.getCharacterValue(character));
         const lastNameDigits = this.lastName.split('')
@@ -134,7 +210,8 @@ export class Numerology {
         const lastName = this.addUp(lastNameDigits);
         const middleName = this.addUp(middleNameDigits);
 
-        return this.addUp([firstName, lastName, middleName]);
+        this._destinyNumber = this.addUp([firstName, lastName, middleName]);
+        return this._destinyNumber;
     }
 
     /**
@@ -145,12 +222,17 @@ export class Numerology {
      * @returns 
      */
     soulUrgeNumber(): number {
+        if (this._soulUrgeNumber !== -1) {
+            return this._soulUrgeNumber;
+        }
+
         const vowels = this.firstName.split('')
             .concat(this.lastName.split(''))
             .concat(this.middleName?.split('').filter(c => c !== " ") || [])
             .filter((character) => this.VOWELS.includes(character.toUpperCase()))
             .map((character) => this.getCharacterValue(character));
-        return this.addUp(vowels);
+        this._soulUrgeNumber = this.addUp(vowels);
+        return this._soulUrgeNumber;
     }
 
     /**
@@ -162,12 +244,17 @@ export class Numerology {
      * @returns 
      */
     characterNumber(): number {
+        if (this._characterNumber !== -1) {
+            return this._characterNumber;
+        }
+
         const consonants = this.firstName.split('')
             .concat(this.lastName.split(''))
             .concat(this.middleName?.split('').filter(c => c !== " ") || [])
             .filter((character) => this.CONSONANTS.includes(character.toUpperCase()))
             .map((character) => this.getCharacterValue(character));
-        return this.addUp(consonants);
+        this._characterNumber = this.addUp(consonants);
+        return this._characterNumber;
     }
 
     /**
@@ -178,7 +265,239 @@ export class Numerology {
      * Example: 12/12/1990 => 1 + 2 = 3
      */
     birthdayNumber(): number {
-        return this.addUpToSingleDigit(this.day);
+        if (this._birthdayNumber !== -1) {
+            return this._birthdayNumber;
+        }
+
+        this._birthdayNumber = this.addUpToSingleDigit(this.day);
+        return this._birthdayNumber;
     }
 
+    /**
+     * Return the [Maturity Number](https://www.tokenrock.com/numerology/maturity/) of a person
+     * 
+     * Calculate it by adding up the [Life Path Number](https://www.tokenrock.com/numerology/life_path/) and the [Destiny Number](https://www.tokenrock.com/numerology/destiny/)
+     * 
+     * Example: 12/12/1990 => 7 + 8 = 15 => 1 + 5 = 6
+     * 
+     * @returns 
+     */
+    maturityNumber(): number {
+        if (this._maturityNumber !== -1) {
+            return this._maturityNumber;
+        }
+
+        const lifePathNumber = this.lifePathNumber();
+        const destinyNumber = this.destinyNumber();
+        this._maturityNumber = this.addUpToSingleDigit(lifePathNumber + destinyNumber);
+        return this._maturityNumber;
+    }
+
+    /**
+     * Bridge to success number is the difference between the [Life Path Number](https://www.tokenrock.com/numerology/life_path/) and the [Destiny Number](https://www.tokenrock.com/numerology/destiny/)
+     * 
+     * Calculate by subtracting the [Life Path Number](https://www.tokenrock.com/numerology/life_path/) from the [Destiny Number](https://www.tokenrock.com/numerology/destiny/)
+     * 
+     * Example: 12/12/1990 => Life Path Number = 7, Destiny Number = 8 => 8 - 7 = 1 (use absolute value)
+     * @returns 
+     */
+    bridgeToSuccessNumber(): number {
+        if (this._bridgeToSuccessNumber !== -1) {
+            return this._bridgeToSuccessNumber;
+        }
+
+        const lifePathNumber = this.lifePathNumber();
+        const destinyNumber = this.destinyNumber();
+        this._bridgeToSuccessNumber = this.addUpToSingleDigit(Math.abs(lifePathNumber - destinyNumber));
+        return this._bridgeToSuccessNumber;
+    }
+
+    /**
+     * Bridge to happy life number is the difference between the [Character Number](https://www.tokenrock.com/numerology/personality/) and the [Soul Urge Number](https://www.tokenrock.com/numerology/soul_urge/)
+     * 
+     * Calculate by subtracting the [Character Number](https://www.tokenrock.com/numerology/personality/) from the [Soul Urge Number](https://www.tokenrock.com/numerology/soul_urge/)
+     * 
+     * Example: John Doe => Character Number = 4, Soul Urge Number = 6 => 6 - 4 = 2 (use absolute value)
+     * @returns 
+     */
+    bridgeToHappyNumber(): number {
+        if (this._bridgeToHappyNumber !== -1) {
+            return this._bridgeToHappyNumber;
+        }
+
+        const characterNumber = this.characterNumber();
+        const soulUrgeNumber = this.soulUrgeNumber();
+        this._bridgeToHappyNumber = this.addUpToSingleDigit(Math.abs(characterNumber - soulUrgeNumber));
+        return this._bridgeToHappyNumber;
+    }
+
+    /**
+     * Return the [Karmic Lesson Numbers](https://www.tokenrock.com/numerology/karmic_lessons/) of a person
+     * 
+     * Calculate by return all the numbers that missing from the full name
+     * 
+     * Example: John Doe => has J, O, H, N, D, E => 1, 6, 8, 5, 4, 5 => 2, 3, 7, 9 are missing
+     */
+    karmicLessonNumbers(): number[] {
+        if (this._karmicLessons[0] !== -1) {
+            return this._karmicLessons;
+        }
+
+        const allDigits = this.firstName.split('')
+            .concat(this.lastName.split(''))
+            .concat(this.middleName?.split('').filter(c => c !== " ") || [])
+            .map((character) => this.getCharacterValue(character));
+        const allNumbers = Array.from(Array(10).keys());
+        this._karmicLessons = allNumbers.filter((number) => !allDigits.includes(number));
+        this._karmicLessons = this._karmicLessons.length === 0 ? [-1] : this._karmicLessons;
+        return this._karmicLessons;
+    }
+
+    /**
+     * Return the [Karmic Debt Number](https://www.tokenrock.com/numerology/karmic_debt/) of a person
+     * 
+     * Is when your Life Path Number is one of the following: 13, 14, 16 or 19
+     * 
+     * Will return -1 if the person doesn't have a Karmic Debt Number
+     * @returns 
+     */
+    karmicDebtNumber(): number {
+        if (this._karmicDebtsNumber !== -1) {
+            return this._karmicDebtsNumber;
+        }
+
+        const allDigits = this.splitDigits(this.day)
+            .concat(this.splitDigits(this.month))
+            .concat(this.splitDigits(this.year));
+
+        let lifePathNumber = allDigits.reduce((sum, digit) => sum + digit, 0);
+        const karmicDebt = [13, 14, 16, 19];
+        while (lifePathNumber > 9) {
+            if (karmicDebt.includes(lifePathNumber)) {
+                this._karmicDebtsNumber = lifePathNumber;
+                return lifePathNumber;
+            }
+
+            lifePathNumber = this.addUpToSingleDigit(lifePathNumber);
+        }
+
+        this._karmicDebtsNumber = -1;
+        return -1;
+    }
+
+    /**
+     * Return the [Balance Number](https://www.tokenrock.com/numerology/balance/) of a person
+     * 
+     * Calculate it by adding up all the digits of the first characters of the full name
+     * 
+     * Example: John Doe => J + D = 1 + 4 = 5
+     * 
+     * @returns 
+     */
+    balanceNumber(): number {
+        if (this._balanceNumber !== -1) {
+            return this._balanceNumber;
+        }
+
+        const firstCharactersInFullName = this.firstName[0] + this.lastName[0] + (this.middleName || '').split(' ').reduce((sum, name) => sum + name[0], '');
+        const allDigits = firstCharactersInFullName.split('')
+            .map((character) => this.getCharacterValue(character));
+        this._balanceNumber = this.addUp(allDigits);
+        return this._balanceNumber;
+    }
+
+    /**
+     * Return the birth map of a person
+     * 
+     * @returns 
+     */
+    birthMap(): Record<string, number[] | undefined> {
+
+        if (!this.mapIsJustInitialized(this.BIRTH_MAP)) {
+            return this.BIRTH_MAP;
+        }
+
+        const allDigits = this.splitDigits(this.day)
+            .concat(this.splitDigits(this.month))
+            .concat(this.splitDigits(this.year));
+
+        this.clearMap(this.BIRTH_MAP);
+
+        for (const digit of allDigits) {
+            if (!this.BIRTH_MAP[`${digit}`]) {
+                this.BIRTH_MAP[`${digit}`] = [digit];
+            } else {
+                this.BIRTH_MAP[`${digit}`] = [...(this.BIRTH_MAP[`${digit}`] || []), digit];
+            }
+        }
+
+        return this.BIRTH_MAP;
+    }
+
+    mapIsJustInitialized(map: Record<string, number[] | undefined>): boolean {
+        for (const key in map) {
+            if (map[key]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Return the name map of a person
+     * 
+     * @returns 
+     */
+    nameMap(): Record<string, number[] | undefined> {
+        if (!this.mapIsJustInitialized(this.NAME_MAP)) {
+            return this.NAME_MAP;
+        }
+
+        const allDigits = this.firstName.split('')
+            .concat(this.lastName.split(''))
+            .concat(this.middleName?.split('').filter(c => c !== " ") || [])
+            .map((character) => this.getCharacterValue(character));
+
+        this.clearMap(this.NAME_MAP);
+
+        for (const digit of allDigits) {
+            if (!this.NAME_MAP[`${digit}`]) {
+                this.NAME_MAP[`${digit}`] = [digit];
+            } else {
+                this.NAME_MAP[`${digit}`] = [...(this.NAME_MAP[`${digit}`] || []), digit];
+            }
+        }
+
+        return this.NAME_MAP;
+    }
+
+    clearMap(map: Record<string, number[] | undefined>): Record<string, number[] | undefined> {
+        for (const key in map) {
+            if (map[key]?.length === 0) {
+                delete map[key];
+            }
+        }
+        return map;
+    }
+
+    mergeMap() {
+        if (!this.mapIsJustInitialized(this.MERGE_MAP)) {
+            return this.MERGE_MAP;
+        }
+
+        const birthMap = this.birthMap();
+        const nameMap = this.nameMap();
+
+        this.clearMap(this.MERGE_MAP);
+
+        for (const key in birthMap) {
+            if (!birthMap[key] && !nameMap[key]) {
+                continue;
+            }
+
+            this.MERGE_MAP[key] = [...(birthMap[key] || []), ...(nameMap[key] || [])];
+        }
+
+        return this.MERGE_MAP;
+    }
 }
