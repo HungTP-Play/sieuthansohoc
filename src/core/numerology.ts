@@ -107,6 +107,8 @@ export class Numerology {
         this.birthMap();
         this.nameMap();
         this.mergeMap();
+        this.fourPeaks();
+        this.fourPeakAges();
     }
 
     /**
