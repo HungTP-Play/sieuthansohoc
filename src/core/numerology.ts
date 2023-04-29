@@ -10,6 +10,8 @@ export class Numerology {
     private _karmicLessons = [-1];
     private _karmicDebtsNumber = -1;
     private _balanceNumber = -1;
+    private _fourPeaks = [-1, -1, -1, -1];
+    private _fourPeakAges = [-1, -1, -1, -1];
 
     constructor(
         private day: number,
@@ -503,5 +505,35 @@ export class Numerology {
         }
 
         return this.MERGE_MAP;
+    }
+
+    fourPeaks():number[]{
+        if(this._fourPeaks[0] !== -1){
+            return this._fourPeaks;
+        }
+
+        const day = this.addUpToSingleDigit(this.day);
+        const month = this.addUpToSingleDigit(this.month);
+        const year = this.addUpToSingleDigit(this.year);
+
+        const peak1 = this.addUpToSingleDigit(day + month);
+        const peak2 = this.addUpToSingleDigit(day + year);
+        const peak3 = this.addUpToSingleDigit(peak1 + peak2);
+        const peak4 = this.addUpToSingleDigit(month + year);
+
+        this._fourPeaks = [peak1, peak2, peak3, peak4];
+        return this._fourPeaks;
+    }
+
+    fourPeakAges():number[]{
+        if(this._fourPeakAges[0] !== -1){
+            return this._fourPeakAges;
+        }
+
+        const firstPeak = 36 - this.addUpToSingleDigit(this.lifePathNumber());
+        const secondPeak = firstPeak + 9;
+        const thirdPeak = secondPeak + 9;
+        const fourthPeak = thirdPeak + 9;
+        return [firstPeak, secondPeak, thirdPeak, fourthPeak];
     }
 }

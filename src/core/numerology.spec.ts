@@ -453,4 +453,74 @@ describe('Numerology', () => {
             });
         }
     });
+
+    describe('Test fourPeaks', () => {
+        const cases = [
+            {
+                day: 1,
+                month: 1,
+                year: 2000,
+                firstName: 'John',
+                lastName: 'Doe',
+                expected: [2, 3, 5, 3]
+            }, {
+                day: 2,
+                month: 1,
+                year: 2000,
+                firstName: 'Jane',
+                lastName: 'Doe',
+                expected: [3, 4, 7, 3]
+            }, {
+                day: 8,
+                month: 1,
+                year: 1998,
+                firstName: 'Hung',
+                middleName: 'Phat',
+                lastName: 'Tran',
+                expected: [9, 8, 8, 1]
+            }
+        ];
+
+        for (const { day, month, year, firstName, middleName, lastName, expected } of cases) {
+            it(`should return ${expected} for ${day}/${month}/${year} ${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`, () => {
+                const numerology = new Numerology(day, month, year, firstName, lastName, middleName);
+                expect(numerology.fourPeaks()).toEqual(expected);
+            });
+        }
+    });
+
+    describe('Test fourPeakAges', () => {
+        const cases = [
+            {
+                day: 1,
+                month: 1,
+                year: 2000,
+                firstName: 'John',
+                lastName: 'Doe',
+                expected: [32, 41, 50, 59]
+            }, {
+                day: 2,
+                month: 1,
+                year: 2000,
+                firstName: 'Jane',
+                lastName: 'Doe',
+                expected: [31, 40, 49, 58]
+            }, {
+                day: 8,
+                month: 1,
+                year: 1998,
+                firstName: 'Hung',
+                middleName: 'Phat',
+                lastName: 'Tran',
+                expected: [27, 36, 45, 54]
+            }
+        ];
+
+        for (const { day, month, year, firstName, middleName, lastName, expected } of cases) {
+            it(`should return ${expected} for ${day}/${month}/${year} ${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`, () => {
+                const numerology = new Numerology(day, month, year, firstName, lastName, middleName);
+                expect(numerology.fourPeakAges()).toEqual(expected);
+            });
+        }
+    });
 });
