@@ -488,6 +488,11 @@ export class Numerology {
         return map;
     }
 
+    /**
+     * Merge map is the merge of the birth map and the name map
+     *
+     * @returns 
+     */
     mergeMap() {
         if (!this.mapIsJustInitialized(this.MERGE_MAP)) {
             return this.MERGE_MAP;
@@ -509,6 +514,18 @@ export class Numerology {
         return this.MERGE_MAP;
     }
 
+    /**
+     * Calculate the meaning of four peaks in the life of a person
+     * 
+     * The four peaks are:
+     * 
+     * - The first peak is the sum of the day and month of birth
+     * - The second peak is the sum of the day and year of birth
+     * - The third peak is the sum of the first and second peaks
+     * - The fourth peak is the sum of the month and year of birth
+     * 
+     * @returns 
+     */
     fourPeaks():number[]{
         if(this._fourPeaks[0] !== -1){
             return this._fourPeaks;
@@ -527,6 +544,13 @@ export class Numerology {
         return this._fourPeaks;
     }
 
+    /**
+     * Return the ages of the four peaks in the life of a person
+     * 
+     * The first peak will appear at the age of 36 - life path number, the for each peak will appear at the age of 9 years after the previous peak
+     * 
+     * @returns 
+     */
     fourPeakAges():number[]{
         if(this._fourPeakAges[0] !== -1){
             return this._fourPeakAges;
